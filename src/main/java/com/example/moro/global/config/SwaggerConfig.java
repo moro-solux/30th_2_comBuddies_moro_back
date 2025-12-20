@@ -1,5 +1,6 @@
 package com.example.moro.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.info.Contact;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,5 +28,9 @@ public class SwaggerConfig {
                 .servers(List.of(
                         new Server().url("http://localhost:8080").description("Local Server")
                 ));
+    }
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

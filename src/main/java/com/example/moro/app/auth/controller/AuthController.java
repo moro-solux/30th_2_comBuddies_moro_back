@@ -5,6 +5,8 @@ import com.example.moro.app.auth.dto.LoginResponse;
 import com.example.moro.app.auth.service.AuthService;
 import com.example.moro.global.common.ApiResponseTemplate;
 import com.example.moro.global.common.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +16,18 @@ import org.springframework.web.bind.annotation.*;
  * 소셜 로그인 및 토큰 발급관련 api를 처리함
  */
 
+@Tag(name = "Auth", description = "인증 관련 API (로그인 등)") // Swagger 상단 그룹 이름
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
+
+    @Operation(
+            summary = "구글 로그인/회원가입",
+            description = "구글에서 받은 이메일과 이름을 통해 로그인을 진행하고 JWT 토큰을 발급합니다."
+    )
 
     /**
      * 구글 인증 성공 후 로그인을 처리하는 엔드포인트

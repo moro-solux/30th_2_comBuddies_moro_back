@@ -26,6 +26,20 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "869169115128-8ej4s61a5em6lktgisnhslo9ijo0itv2.apps.googleusercontent.com"
+            client-secret: "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"
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope:
+              - openid
+              - email
+              - profile
+
 app:
   s3:
     bucket: moro-s3-bucket
@@ -33,16 +47,3 @@ app:
 
 jwt:
   secret: ${JWT_SECRET:vmfhaltjskdbstjavyansjungskwodydrnwhskqbzl}
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            scope:
-              - openid
-              - email
-              - profile
