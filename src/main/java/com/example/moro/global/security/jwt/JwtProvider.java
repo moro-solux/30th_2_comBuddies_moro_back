@@ -20,7 +20,7 @@ import java.util.Date;
 public class JwtProvider {
 
     // 설정파일(yml)의 암호화 키
-    @Value("${jwt.secret:vmfhaltjskdbstjavyansjungskwodydrnwhskqbzl}")
+    @Value("${jwt.secret}")
     private String salt;
 
     private Key secretKey;
