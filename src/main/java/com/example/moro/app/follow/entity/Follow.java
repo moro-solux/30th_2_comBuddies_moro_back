@@ -46,7 +46,4 @@ public class Follow{
         this.status = FollowStatus.ACCEPTED;
     }
 
-    public void reject() {
-        this.status = FollowStatus.REJECTED;
-    }
 }
