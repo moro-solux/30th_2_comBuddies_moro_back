@@ -35,7 +35,7 @@ public class FollowController {
         }
         String email = authentication.getName();
         Member member = memberService.findByEmail(email);
-        Follow follow = followService.requestFollow(member.getId(), request.getFollowingId());
+        Follow follow = followService.requestFollow(member.getId(), request.getTargetUserId());
 
         FollowResponseDto response = new FollowResponseDto(follow.getFollowId(), follow.getStatus());
 
