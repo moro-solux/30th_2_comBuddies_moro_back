@@ -60,6 +60,12 @@ public class FollowController {
         return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, response);
     }
 
+    @DeleteMapping("/{followId}/reject")
+    public ResponseEntity<?> reject(@PathVariable Long followId) {
+        Member me = getCurrentMember();
+        followService.rejectByFollowing(followId, me.getId());
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
+    }
 
     private Member getCurrentMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -70,5 +76,7 @@ public class FollowController {
 
         return memberService.findByEmail(authentication.getName());
     }
+
+
 
 }

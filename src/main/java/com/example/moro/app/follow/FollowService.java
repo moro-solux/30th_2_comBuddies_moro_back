@@ -75,6 +75,24 @@ public class FollowService {
         );
     }
 
+    public void rejectByFollowing(Long followId, Long myUserId) {
+        Follow follow = followRepository.findById(followId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.RESOURCE_NOT_FOUND, "팔로우 요청이 존재하지 않습니다."
+                ));
+
+        if (!follow.getFollowing().getId().equals(myUserId)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED_EXCEPTION);
+        }
+
+        if (follow.getStatus() != FollowStatus.PENDING) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "거절할 수 없는 상태입니다.");
+        }
+
+        followRepository.delete(follow);
+    }
+
+
 
 
 }
