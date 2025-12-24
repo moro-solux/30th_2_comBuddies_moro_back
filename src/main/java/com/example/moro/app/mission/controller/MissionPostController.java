@@ -45,6 +45,16 @@ public class MissionPostController {
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
     }
 
-    /*@GetMapping("posts/freinds")
-    public ResponseEntity<ApiResponseTemplate<List<MissionPostResponse>>> getMyFreinds(){}*/
+    @GetMapping("posts/friends")
+    public ResponseEntity<ApiResponseTemplate<List<MissionPostResponse>>> getMyFreinds(
+            @AuthenticationPrincipal Long userId
+    ){
+        List<MissionPostResponse> response = missionPostService.getFriendPosts(userId);
+        // 친구 없을 때 빈 리스트 반환
+        if (response == null || response.isEmpty()) {
+            return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
+        }
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
+
+    }
 }

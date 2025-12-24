@@ -20,6 +20,6 @@ public interface MissionPostRepository extends JpaRepository<MissionPost,Long> {
     List<MissionPost> findAllByOrderByRandom();
 
     // 3. 팔로워들의 미션 게시글 조회(최신순)
-    //List<MissionPost> findByMember_IdInOrderByCreatedAtDesc(List<Long> memberId);
+    List<MissionPost> findByMember_IdInOrderByCreatedAtDesc(List<Long> memberIds);
 
 }

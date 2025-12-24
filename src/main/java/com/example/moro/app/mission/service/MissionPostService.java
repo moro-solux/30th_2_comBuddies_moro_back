@@ -30,6 +30,7 @@ public class MissionPostService {
     private final MissionRepository missionRepository;
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
+    private final FollowRepository followRepository;
 
     @Transactional
     public Long saveMissionPost(MultipartFile image, MissionPostRequest request) {
@@ -76,7 +77,9 @@ public class MissionPostService {
                 .map(MissionPostResponse::from)
                 .toList();
     }
-    /* 미션 게시물 조회(친구)
+
+
+    // 미션 게시물 조회(친구)
     @Transactional(readOnly = true)
     public List<MissionPostResponse> getFriendPosts(Long currentUserId){
         // 1. 현재 사용자 조회
@@ -84,17 +87,27 @@ public class MissionPostService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         // 2. 내가 '팔로워' 이고 상태가 'ACCEPTED'인 follow 객체 조회
-        List<Follow> follows = FollowRepository.findByFollowerAndStatus(me, FollowStatus.ACCEPTED);
+        List<Follow> follows = followRepository.findByFollowerAndStatus(me, FollowStatus.ACCEPTED);
+
+        // [추가] 친구 id 리스트 비었을 경우 빈 리스트 반환
+        if (follows.isEmpty()) {
+            return List.of();
+        }
 
         // 3. Follow 객체에서 내가 팔로잉하는 상대방만 추출
-        List<Member> friends = follows.stream()
-                .map(Follow::getFollowing)
+        List<Long> friendIds = follows.stream()
+                .map(follow -> follow.getFollowing().getId())
                 .toList();
 
+        // [추가] 친구 id 리스트 비었을 경우 빈 리스트 반환
+        if (friendIds.isEmpty()) {
+            return List.of();
+        }
+
         // 4. 친구들이 작성한 게시글 조회
-        return missionPostRepository.findByMember_IdOrderByCreatedAtDesc(friends)
+        return missionPostRepository.findByMember_IdInOrderByCreatedAtDesc(friendIds)
                 .stream()
                 .map(MissionPostResponse::from)
                 .toList();
-    }*/
+    }
 }
