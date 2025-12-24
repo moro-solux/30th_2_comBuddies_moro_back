@@ -1,19 +1,23 @@
 package com.example.moro.app.mission.service;
 
+import com.example.moro.app.follow.FollowRepository;
+import com.example.moro.app.follow.entity.Follow;
+import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.repository.MemberRepository;
 import com.example.moro.app.mission.dto.MissionPostRequest;
+import com.example.moro.app.mission.dto.MissionPostResponse;
 import com.example.moro.app.mission.entity.Mission;
 import com.example.moro.app.mission.entity.MissionPost;
 import com.example.moro.app.mission.repository.MissionPostRepository;
 import com.example.moro.app.mission.repository.MissionRepository;
 import com.example.moro.app.s3.S3Service;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
 *  이미지를 서버(s3)에 저장하고 그 결과인 url을 엔티티에 세팅함
@@ -53,6 +57,44 @@ public class MissionPostService {
                 .build();
 
         return missionPostRepository.save(missionPost).getMisPostId();
-
     }
+
+    // 미션 게시글 조회(나)
+    @Transactional(readOnly = true)
+    public List<MissionPostResponse> getMyPosts(Long userId){
+        return missionPostRepository.findByMember_IdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(MissionPostResponse::from)
+                .toList();
+    }
+
+    // 미션 게시글 조회(전체)
+    @Transactional(readOnly = true)
+    public List<MissionPostResponse> getAllPosts(){
+        return missionPostRepository.findAllByOrderByRandom()
+                .stream()
+                .map(MissionPostResponse::from)
+                .toList();
+    }
+    /* 미션 게시물 조회(친구)
+    @Transactional(readOnly = true)
+    public List<MissionPostResponse> getFriendPosts(Long currentUserId){
+        // 1. 현재 사용자 조회
+        Member me = memberRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 2. 내가 '팔로워' 이고 상태가 'ACCEPTED'인 follow 객체 조회
+        List<Follow> follows = FollowRepository.findByFollowerAndStatus(me, FollowStatus.ACCEPTED);
+
+        // 3. Follow 객체에서 내가 팔로잉하는 상대방만 추출
+        List<Member> friends = follows.stream()
+                .map(Follow::getFollowing)
+                .toList();
+
+        // 4. 친구들이 작성한 게시글 조회
+        return missionPostRepository.findByMember_IdOrderByCreatedAtDesc(friends)
+                .stream()
+                .map(MissionPostResponse::from)
+                .toList();
+    }*/
 }
