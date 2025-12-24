@@ -41,4 +41,42 @@ public class FollowController {
 
         return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, response);
     }
+
+    @DeleteMapping("/{targetUserId}")
+    public ResponseEntity<?> removeFollow(@PathVariable Long targetUserId) {
+
+        Member member = getCurrentMember();
+        followService.removeByFollower(member.getId(), targetUserId);
+
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
+    }
+
+    @PatchMapping("/{followId}/accept")
+    public ResponseEntity<?> acceptFollow(@PathVariable Long followId) {
+
+        Member member = getCurrentMember();
+        FollowResponseDto response = followService.approveFollow(followId, member.getId());
+
+        return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, response);
+    }
+
+    @DeleteMapping("/{followId}/reject")
+    public ResponseEntity<?> reject(@PathVariable Long followId) {
+        Member me = getCurrentMember();
+        followService.rejectByFollowing(followId, me.getId());
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
+    }
+
+    private Member getCurrentMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED_EXCEPTION);
+        }
+
+        return memberService.findByEmail(authentication.getName());
+    }
+
+
+
 }
