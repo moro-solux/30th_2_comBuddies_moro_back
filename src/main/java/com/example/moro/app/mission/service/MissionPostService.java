@@ -1,10 +1,10 @@
 package com.example.moro.app.mission.service;
 
 import com.example.moro.app.member.entity.Member;
+import com.example.moro.app.member.repository.MemberRepository;
 import com.example.moro.app.mission.dto.MissionPostRequest;
 import com.example.moro.app.mission.entity.Mission;
 import com.example.moro.app.mission.entity.MissionPost;
-import com.example.moro.app.mission.repository.MemberRepository;
 import com.example.moro.app.mission.repository.MissionPostRepository;
 import com.example.moro.app.mission.repository.MissionRepository;
 import com.example.moro.app.s3.S3Service;
