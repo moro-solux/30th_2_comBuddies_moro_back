@@ -51,6 +51,14 @@ public class FollowController {
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
     }
 
+    @PatchMapping("/{followId}/accept")
+    public ResponseEntity<?> acceptFollow(@PathVariable Long followId) {
+
+        Member member = getCurrentMember();
+        FollowResponseDto response = followService.approveFollow(followId, member.getId());
+
+        return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, response);
+    }
 
 
     private Member getCurrentMember() {

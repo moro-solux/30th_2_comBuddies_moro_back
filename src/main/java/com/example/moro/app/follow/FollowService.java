@@ -1,5 +1,6 @@
 package com.example.moro.app.follow;
 
+import com.example.moro.app.follow.dto.FollowResponseDto;
 import com.example.moro.app.follow.dto.FollowUserResponse;
 import com.example.moro.app.follow.entity.Follow;
 import com.example.moro.app.follow.entity.FollowStatus;
@@ -49,6 +50,31 @@ public class FollowService {
         }
             followRepository.delete(follow);
     }
+    @Transactional
+    public FollowResponseDto approveFollow(Long followId, Long myUserId) {
+
+        Follow follow = followRepository.findById(followId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.RESOURCE_NOT_FOUND, "팔로우 요청이 존재하지 않습니다."
+                ));
+
+        if (!follow.getFollowing().getId().equals(myUserId)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED_EXCEPTION);
+        }
+
+        if (follow.getStatus() != FollowStatus.PENDING) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "승인할 수 없는 상태입니다.");
+        }
+
+        follow.accept();
+        followRepository.save(follow);
+
+        return new FollowResponseDto(
+                follow.getFollowId(),
+                follow.getStatus()
+        );
+    }
+
 
 
 }
