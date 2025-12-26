@@ -7,27 +7,27 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FollowUserResponse {
+public class FollowSearchResponse {
     private Long followId;
     private FollowStatus status;
 
-    private Long memberId;
+    private Long userId;
     private String userName;
 
-    public static FollowUserResponse fromFollower(Follow follow) {
-        return FollowUserResponse.builder()
+    public static FollowSearchResponse fromFollower(Follow follow) {
+        return FollowSearchResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
-                .memberId(follow.getFollower().getId())
+                .userId(follow.getFollower().getId())
                 .userName(follow.getFollower().getUserName())
                 .build();
     }
 
-    public static FollowUserResponse fromFollowing(Follow follow) {
-        return FollowUserResponse.builder()
+    public static FollowSearchResponse fromFollowing(Follow follow) {
+        return FollowSearchResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
-                .memberId(follow.getFollowing().getId())
+                .userId(follow.getFollowing().getId())
                 .userName(follow.getFollowing().getUserName())
                 .build();
     }

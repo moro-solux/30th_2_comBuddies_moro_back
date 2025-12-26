@@ -9,6 +9,8 @@ import com.example.moro.app.member.repository.MemberRepository;
 import com.example.moro.global.common.ErrorCode;
 import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +120,12 @@ public class FollowService {
                 .stream()
                 .map(FollowUserResponse::fromFollower)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<FollowUserResponse> searchFollowers(Long userId, String keyword, Pageable pageable){
+        return followRepository.searchFollowers(userId, keyword, pageable)
+                .map(FollowUserResponse::fromFollower);
     }
 
 
