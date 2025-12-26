@@ -7,15 +7,15 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FollowSearchResponse {
+public class FollowUserResponse {
     private Long followId;
     private FollowStatus status;
 
     private Long userId;
     private String userName;
 
-    public static FollowSearchResponse fromFollower(Follow follow) {
-        return FollowSearchResponse.builder()
+    public static FollowUserResponse fromFollower(Follow follow) {
+        return FollowUserResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
                 .userId(follow.getFollower().getId())
@@ -23,8 +23,8 @@ public class FollowSearchResponse {
                 .build();
     }
 
-    public static FollowSearchResponse fromFollowing(Follow follow) {
-        return FollowSearchResponse.builder()
+    public static FollowUserResponse fromFollowing(Follow follow) {
+        return FollowUserResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
                 .userId(follow.getFollowing().getId())
