@@ -1,6 +1,8 @@
 package com.example.moro.app.member.repository;
 
 import com.example.moro.app.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -25,4 +27,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return 객체를 포함한 optional(로그인, 인증 프로세스에서 사용)
      */
     Optional<Member> findByEmail(String email);
+
+    Page<Member> findByUserNameContaining(String keyword, Pageable pageable);
 }

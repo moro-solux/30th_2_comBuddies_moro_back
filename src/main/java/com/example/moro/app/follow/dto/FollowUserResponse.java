@@ -11,14 +11,14 @@ public class FollowUserResponse {
     private Long followId;
     private FollowStatus status;
 
-    private Long memberId;
+    private Long userId;
     private String userName;
 
     public static FollowUserResponse fromFollower(Follow follow) {
         return FollowUserResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
-                .memberId(follow.getFollower().getId())
+                .userId(follow.getFollower().getId())
                 .userName(follow.getFollower().getUserName())
                 .build();
     }
@@ -27,7 +27,7 @@ public class FollowUserResponse {
         return FollowUserResponse.builder()
                 .followId(follow.getFollowId())
                 .status(follow.getStatus())
-                .memberId(follow.getFollowing().getId())
+                .userId(follow.getFollowing().getId())
                 .userName(follow.getFollowing().getUserName())
                 .build();
     }

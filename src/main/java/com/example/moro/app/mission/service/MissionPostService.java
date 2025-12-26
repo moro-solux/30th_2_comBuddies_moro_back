@@ -1,6 +1,6 @@
 package com.example.moro.app.mission.service;
 
-import com.example.moro.app.follow.FollowRepository;
+import com.example.moro.app.follow.repository.FollowRepository;
 import com.example.moro.app.follow.entity.Follow;
 import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.member.entity.Member;

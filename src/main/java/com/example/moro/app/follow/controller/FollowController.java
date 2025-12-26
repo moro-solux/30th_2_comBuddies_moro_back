@@ -1,5 +1,6 @@
-package com.example.moro.app.follow;
+package com.example.moro.app.follow.controller;
 
+import com.example.moro.app.follow.service.FollowService;
 import com.example.moro.app.follow.dto.FollowRequestDto;
 import com.example.moro.app.follow.dto.FollowResponseDto;
 import com.example.moro.app.follow.entity.Follow;
@@ -76,6 +77,8 @@ public class FollowController {
 
         return memberService.findByEmail(authentication.getName());
     }
+
+
 
 
 

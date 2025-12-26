@@ -1,5 +1,6 @@
-package com.example.moro.app.follow;
+package com.example.moro.app.follow.service;
 
+import com.example.moro.app.follow.repository.FollowRepository;
 import com.example.moro.app.follow.dto.FollowResponseDto;
 import com.example.moro.app.follow.dto.FollowUserResponse;
 import com.example.moro.app.follow.entity.Follow;
@@ -9,6 +10,8 @@ import com.example.moro.app.member.repository.MemberRepository;
 import com.example.moro.global.common.ErrorCode;
 import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,22 +96,25 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<FollowUserResponse>  getFollowerList(Long myUserId){
-        return followRepository
-                .findByFollowingIdAndStatus(myUserId, FollowStatus.ACCEPTED)
-                .stream()
-                .map(FollowUserResponse::fromFollower)
-                .collect(Collectors.toList());
-
+    public Page<FollowUserResponse> getFollowers(Long userId, String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isBlank()) {
+            return followRepository.findByFollowingIdAndStatus(userId, FollowStatus.ACCEPTED, pageable)
+                    .map(FollowUserResponse::fromFollower);
+        } else {
+            return followRepository.searchFollowers(userId, keyword, pageable)
+                    .map(FollowUserResponse::fromFollower);
+        }
     }
 
     @Transactional(readOnly = true)
-    public List<FollowUserResponse> getFollowingList(Long myUserId) {
-        return followRepository
-                .findByFollowerIdAndStatus(myUserId, FollowStatus.ACCEPTED)
-                .stream()
-                .map(FollowUserResponse::fromFollowing)
-                .collect(Collectors.toList());
+    public Page<FollowUserResponse> getFollowings(Long userId, String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isBlank()) {
+            return followRepository.findByFollowerIdAndStatus(userId, FollowStatus.ACCEPTED, pageable)
+                    .map(FollowUserResponse::fromFollowing);
+        } else {
+            return followRepository.searchFollowings(userId, keyword, pageable)
+                    .map(FollowUserResponse::fromFollowing);
+        }
     }
 
     @Transactional(readOnly = true)
