@@ -42,4 +42,8 @@ public class Member {
         ADMIN
     }
 
+    public boolean canBeFollowedDirectly() {
+        return isPublic;
+    }
+
 }

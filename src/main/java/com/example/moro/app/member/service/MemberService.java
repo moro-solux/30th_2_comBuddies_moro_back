@@ -1,7 +1,10 @@
 package com.example.moro.app.member.service;
 
+import com.example.moro.app.member.dto.MemberSearchResponse;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,4 +74,11 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
         memberRepository.delete(member);
     }
+
+    @Transactional(readOnly = true)
+    public Page<MemberSearchResponse> search(String keyword, Pageable pageable){
+        return memberRepository.findByUserNameContaining(keyword, pageable)
+                .map(MemberSearchResponse::from);
+    }
+
 }
