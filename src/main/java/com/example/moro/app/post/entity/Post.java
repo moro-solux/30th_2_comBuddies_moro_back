@@ -1,20 +1,21 @@
-package com.example.moro.app.post.domain;
+package com.example.moro.app.post.entity;
 
 import com.example.moro.app.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.catalina.User;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "postId",updatable = false)
     private Long id; //PostId
 
@@ -41,12 +42,6 @@ public class Post {
         this.createdAt = LocalDateTime.now();
         this.lat = lat;
         this.lng = lng;
-    }
-
-    //기본 생성자
-    @Builder
-    public Post(Member member, Integer mainColorId, String imageUrl, LocalDateTime createdAt) {
-
     }
 
 }
