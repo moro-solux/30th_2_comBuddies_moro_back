@@ -20,15 +20,20 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email; //이메일
 
+    @Setter
     private String userName; //유저 닉네임
 
+    @Setter
     private Long userColorId; //유저 대표 색상 id
 
+    @Setter
     private String userColorHex; //유저 대표색상 코드
 
+    @Setter
     @Builder.Default
     private Boolean isNotification=true; //알림 수신 여부
 
+    @Setter
     @Builder.Default
     private Boolean isPublic=true; // 공개/비공개 여부
 
