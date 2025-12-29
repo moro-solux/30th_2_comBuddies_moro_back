@@ -15,5 +15,6 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, Long
 
     List<UserColorMap> findByMemberAndIsRepresentativeTrue(Member member);
 
+    Optional<UserColorMap> findByMemberIdAndColorMapColorId(Long memberId, Long colorId);
 
 }
