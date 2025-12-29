@@ -1,6 +1,7 @@
 package com.example.moro.app.member.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProfileResponse {
     private Long userId;
     private String userName;
@@ -17,7 +19,8 @@ public class ProfileResponse {
     private int postCount;
     private int followingCount;
     private boolean isCurrentUser;
+    private boolean isVisible;
 
-    private List<String> colorCodes;
+    private List<UserColor> colorCodes;
 
 }
