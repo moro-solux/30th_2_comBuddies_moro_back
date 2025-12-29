@@ -1,10 +1,13 @@
 package com.example.moro.app.member.service;
 
+import com.example.moro.app.colormap.entity.ColorMap;
+import com.example.moro.app.colormap.repository.ColorMapRepository;
 import com.example.moro.app.colormap.repository.UserColorMapRepository;
 import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.follow.repository.FollowRepository;
 import com.example.moro.app.member.dto.MemberSearchResponse;
 import com.example.moro.app.member.dto.ProfileResponse;
+import com.example.moro.app.member.dto.UpdateProfileRequest;
 import com.example.moro.app.member.dto.UserColor;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.colormap.entity.UserColorMap;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final ColorMapRepository colorMapRepository;
     private final UserColorMapRepository userColorMapRepository;
     private final PostRepository postRepository;
     private final FollowRepository followRepository;
@@ -89,7 +93,7 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<MemberSearchResponse> search(String keyword, Pageable pageable){
         return memberRepository.findByUserNameContaining(keyword, pageable)
                 .map(MemberSearchResponse::from);
@@ -144,4 +148,41 @@ public class MemberService {
                 .build();
     }
 
+    @Transactional
+    public void updateProfile(Long memberId, String userName, Long userColorId, String userColorHex) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,
+                        "해당 회원을 찾을 수 없습니다. userId: " + memberId));
+
+        if (userName != null && !userName.isBlank()) {
+            member.setUserName(userName);
+        }
+        if (userColorId != null && userColorHex != null
+                && !userColorHex.isBlank()) {
+
+            ColorMap colorMap = colorMapRepository.findById(userColorId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.BAD_REQUEST,
+                            "해당 색상 ID가 존재하지 않습니다(1~144). colorId: " + userColorId));
+
+            if (!colorMap.getHexCode().equalsIgnoreCase(userColorHex)) {
+                throw new BusinessException(ErrorCode.BAD_REQUEST,
+                        "colorId와 colorHex가 일치하지 않습니다. colorId: " + userColorId + ", colorHex: " + userColorHex);
+            }
+
+            UserColorMap userColorMap = userColorMapRepository
+                    .findByMemberIdAndColorMapColorId(memberId, userColorId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.BAD_REQUEST,
+                            "사용자가 해당 색상을 해금하지 않았습니다. colorId: " + userColorId));
+
+            if (!Boolean.TRUE.equals(userColorMap.getUnlocked())) {
+                throw new BusinessException(ErrorCode.BAD_REQUEST,
+                        "사용자가 해당 색상을 아직 해금하지 않았습니다. colorId: " + userColorId);
+            }
+
+            member.setUserColorId(userColorId);
+            member.setUserColorHex(userColorHex);
+        }
+        memberRepository.save(member);
+    }
 }
+
