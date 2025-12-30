@@ -5,15 +5,14 @@ import com.example.moro.app.colormap.repository.ColorMapRepository;
 import com.example.moro.app.colormap.repository.UserColorMapRepository;
 import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.follow.repository.FollowRepository;
-import com.example.moro.app.member.dto.MemberSearchResponse;
-import com.example.moro.app.member.dto.ProfileResponse;
-import com.example.moro.app.member.dto.UpdateProfileRequest;
-import com.example.moro.app.member.dto.UserColor;
+import com.example.moro.app.member.dto.*;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.colormap.entity.UserColorMap;
 import com.example.moro.app.member.repository.MemberRepository;
+import com.example.moro.app.post.entity.Post;
 import com.example.moro.app.post.repository.PostRepository;
 import com.example.moro.global.common.ErrorCode;
+import com.example.moro.global.common.dto.PageResponse;
 import com.example.moro.global.exception.BusinessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -184,5 +183,66 @@ public class MemberService {
         }
         memberRepository.save(member);
     }
+
+
+    public UserFeedListResponse getProfileFeed(Long targetUserId, ProfileFeedType type, Integer colorId, Pageable pageable) {
+        Member member = memberRepository.findById(targetUserId)
+                .orElseThrow(() -> new BusinessException( ErrorCode.RESOURCE_NOT_FOUND, "해당 회원이 존재하지 않습니다."));
+
+        Page<Post> postPage;
+
+        switch (type) {
+            case SINGLE_COLOR -> {
+                if (colorId == null) {
+                    throw new BusinessException(ErrorCode.BAD_REQUEST, "colorId는 필수입니다.");
+                }
+                postPage = postRepository.findByMemberAndMainColorIdOrderByCreatedAtDesc( member, colorId, pageable);
+            }
+
+            case DEFAULT -> {
+                if (member.getUserColorId() == null) {
+                    postPage = Page.empty(pageable);
+                    break;
+                }
+                Integer userColorId = member.getUserColorId().intValue();
+                postPage = postRepository.findByMemberAndMainColorIdOrderByCreatedAtDesc( member, userColorId, pageable);
+            }
+
+            case USER_COLORS -> {
+                List<Integer> representativeColorIds =
+                        userColorMapRepository
+                                .findByMemberAndIsRepresentativeTrue(member)
+                                .stream()
+                                .map(ucm -> ucm.getColorMap().getColorId().intValue())
+                                .toList();
+
+                if (representativeColorIds.isEmpty()) {
+                    postPage = Page.empty(pageable);
+                    break;
+                }
+
+                postPage = postRepository.findByMemberAndMainColorIdInOrderByCreatedAtDesc(member, representativeColorIds, pageable);
+            }
+
+            default -> throw new BusinessException(ErrorCode.BAD_REQUEST, "잘못된 조회 타입입니다. viewType은 DEAFULT / SINGLE_COLOR / USER_COLORS 중 하나여야 합니다.");
+        }
+
+        PageResponse<UserFeedResponse> pageResponse = PageResponse.from(postPage.map(this::toResponse));
+
+
+        return UserFeedListResponse.builder()
+                .viewType(type)
+                .page(pageResponse)
+                .build();
+    }
+
+    private UserFeedResponse toResponse(Post post) {
+        return UserFeedResponse.builder()
+                .postId(post.getId())
+                .imageUrl(post.getImageUrl())
+                .build();
+    }
+
+
 }
 

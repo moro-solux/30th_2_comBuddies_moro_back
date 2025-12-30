@@ -5,12 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
-public class UserFeedListWrapper {
-    private String viewType;
+public class UserFeedListResponse {
+    private ProfileFeedType viewType;
     private PageResponse<UserFeedResponse> page;
 }
