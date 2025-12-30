@@ -1,9 +1,7 @@
 package com.example.moro.app.member.controller;
 
 import com.example.moro.app.follow.service.FollowService;
-import com.example.moro.app.member.dto.MemberSearchResponse;
-import com.example.moro.app.member.dto.ProfileResponse;
-import com.example.moro.app.member.dto.UpdateProfileRequest;
+import com.example.moro.app.member.dto.*;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.service.MemberService;
 import com.example.moro.global.common.ApiResponseTemplate;
@@ -100,6 +98,22 @@ public class MemberController {
         );
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_UPDATED, "프로필이 성공적으로 업데이트되었습니다.");
     }
+
+    @GetMapping("/{userId}/profile/feed")
+    public ResponseEntity<?> getUserProfileFeed(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "DEFAULT") ProfileFeedType viewType,
+            @RequestParam(required = false) Integer colorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "30") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        UserFeedListResponse response = memberService.getProfileFeed(userId, viewType, colorId, pageable);
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
+    }
+
+
 
 
     private Member getCurrentMember() {
