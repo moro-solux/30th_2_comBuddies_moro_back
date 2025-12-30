@@ -107,9 +107,9 @@ public class MemberService {
         String userColorHex = member.getUserColorHex();
 
         boolean isCurrentUser = member.getId().equals(currentUserId);
-        boolean isVisible = isCurrentUser;
+        boolean isVisible = isCurrentUser || member.getIsPublic();
 
-        if (!isCurrentUser) {
+        if (!isVisible) {
             isVisible = followRepository
                     .findByFollowerIdAndFollowingId(currentUserId, targetUserId)
                     .map(f -> f.getStatus() == FollowStatus.ACCEPTED)
