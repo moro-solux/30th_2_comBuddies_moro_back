@@ -6,6 +6,7 @@ import com.example.moro.app.colormap.entity.UserColorMap;
 import com.example.moro.app.colormap.repository.UserColorMapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collector;
@@ -13,10 +14,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ColorMapService {
     private final UserColorMapRepository userColorMapRepository;
 
-    public List<ThemeGroupResponse> getUserColorMapList(Long memberId) {
+    public List<ThemeGroupResponse> getUserColorMaps(Long memberId) {
         // 모든 색상 정보와 사용자의 해금 상태 한 번에 조회
         List<UserColorMap> userColors = userColorMapRepository.findAllByMemberIdWithColorMap(memberId);
 

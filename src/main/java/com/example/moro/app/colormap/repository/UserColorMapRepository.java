@@ -28,7 +28,7 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, User
 
     // 3. 통합 조회
     @Query("SELECT ucm FROM UserColorMap ucm JOIN FETCH ucm.colorMap WHERE ucm.member.id = :memberId")
-    List<UserColorMap> findAllByMemberIdWithColorMap(@Param("memberid") Long memberId);
+    List<UserColorMap> findAllByMemberIdWithColorMap(@Param("memberId") Long memberId);
 
 
 
