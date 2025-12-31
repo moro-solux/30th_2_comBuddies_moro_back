@@ -3,6 +3,8 @@ package com.example.moro.app.post.dto;
 import com.example.moro.app.post.entity.Post;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class PostResponseDto {
     private Long id;
@@ -11,15 +13,16 @@ public class PostResponseDto {
     private int shareCount; //공유 횟수
     private Double lat; //위도 경도
     private Double lng;
-    //색깔 관련해서 추가해줘야 함...!
+    private List<Integer> colorIds;
 
-    public PostResponseDto(Post post, int likeCount){
+    public PostResponseDto(Post post, int likeCount,List<Integer> colorIds) {
         this.id = post.getId();
         this.imageUrl = post.getImageUrl();
         this.shareCount = post.getShareCount();
         this.lat = post.getLat();
         this.lng = post.getLng();
         this.likecount = likecount;
+        this.colorIds = colorIds;
     }
 
 }
