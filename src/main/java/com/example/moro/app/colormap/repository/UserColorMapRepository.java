@@ -26,7 +26,10 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, User
             "      and u.isRepresentative = true")
     void clearRepresentativeByMember(@Param("member") Member member);
 
-    // 3. 통합 조회
+    // 기존 유지 -> 사용자가 선택한 특정 색만 검증/처리
+    List<UserColorMap> findByMemberAndUnlockedIsTrueAndColorMap_ColorIdIn(Member member, List<Long> colorIds);
+
+    // 3. 통합 조회 + 런타임 에러 해결
     @Query("SELECT ucm FROM UserColorMap ucm JOIN FETCH ucm.colorMap WHERE ucm.member.id = :memberId")
     List<UserColorMap> findAllByMemberIdWithColorMap(@Param("memberId") Long memberId);
 
