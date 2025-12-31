@@ -2,7 +2,9 @@ package com.example.moro.app.post.service;
 
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.post.dto.PostRequestDto;
+import com.example.moro.app.post.dto.PostResponseDto;
 import com.example.moro.app.post.entity.Post;
+import com.example.moro.app.post.repository.LikeRepository;
 import com.example.moro.app.post.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
+    //게시물 생성
     @Transactional
     public Long createPost(PostRequestDto requestDto, Member member) {
         // 엔티티 생성 시 전달받은 member 객체를 함께 빌더에 주입
@@ -29,6 +33,7 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
+    //게시물 삭제
     @Transactional
     public void deletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId)
@@ -38,4 +43,25 @@ public class PostService {
         }
         postRepository.delete(post);
     }
+
+    //게시물 조회
+    @Transactional
+    public PostResponseDto getPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("게시물 없음"));
+
+        int likeCount = likeRepository.countByPost(post);
+
+        return new PostResponseDto(post, likeCount);
+    }
+
+    //게시물 공유
+    @Transactional
+    public void sharePost(Long postId) {
+        Post post=postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("게시물 없음"));
+        post.increaseShareCount();
+    }
+
+
 }

@@ -33,4 +33,11 @@ public class PostController {
         postService.deletePost(postId, member);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
     }
+
+    //게시물 공유
+    @PostMapping("/{postId}/share")
+    public ResponseEntity<ApiResponseTemplate<Void>> sharePost(@PathVariable Long postId) {
+        postService.sharePost(postId);
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_UPDATED, null);
+    }
 }
