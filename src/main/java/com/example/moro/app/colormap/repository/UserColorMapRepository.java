@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,9 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, User
     boolean existsByMemberAndColorMap(Member member, ColorMap colorMap);
     int countByMemberAndUnlockedTrue(Member member);
     List<UserColorMap> findByMemberAndIsRepresentativeTrue(Member member);
+
+    Optional<UserColorMap> findByMemberAndColorMapColorId(Member member, Long colorId);
+
     Optional<UserColorMap> findByMemberIdAndColorMapColorId(Long memberId, Long colorId);
 
     // 2. 대표색 초기화
@@ -30,8 +34,8 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, User
     List<UserColorMap> findByMemberAndUnlockedIsTrueAndColorMap_ColorIdIn(Member member, List<Long> colorIds);
 
     // 3. 통합 조회 + 런타임 에러 해결
-    @Query("SELECT ucm FROM UserColorMap ucm JOIN FETCH ucm.colorMap WHERE ucm.member.id = :memberId")
-    List<UserColorMap> findAllByMemberIdWithColorMap(@Param("memberId") Long memberId);
+    @Query("SELECT ucm FROM UserColorMap ucm JOIN FETCH ucm.colorMap WHERE ucm.member= :member")
+    List<UserColorMap> findAllByMemberWithColorMap(@Param("member") Member member);
 
 
 

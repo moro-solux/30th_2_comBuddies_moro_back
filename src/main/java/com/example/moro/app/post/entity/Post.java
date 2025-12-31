@@ -2,15 +2,13 @@ package com.example.moro.app.post.entity;
 
 import com.example.moro.app.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
@@ -43,5 +41,4 @@ public class Post {
         this.lat = lat;
         this.lng = lng;
     }
-
 }
