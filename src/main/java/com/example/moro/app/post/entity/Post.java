@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
@@ -19,23 +18,29 @@ public class Post {
     @Column(name = "postId",updatable = false)
     private Long id; //PostId
 
+    //memberId
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "userId")
     private Member member;
 
+    //mainColorId
     @Column(nullable = false)
     private Integer mainColorId;
 
+    //ImageUrl
     private String imageUrl;
 
+    //생성 시간
     @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;
 
+    //위경도
     private Double lat;
     private Double lng;
 
-    //공유 횟수를 저장할 필드가 필요하여 추가함. (혹시 이 필드 추가 때문에 꼬이지 않은지 post 부분 살필 것)
+    //공유 횟수를 저장할 필드가 필요하여 추가함.
     @Column
+    @Setter
     private int shareCount=0;
     public void increaseShareCount() {
         this.shareCount++;
