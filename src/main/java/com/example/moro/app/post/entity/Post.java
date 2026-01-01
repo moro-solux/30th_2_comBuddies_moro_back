@@ -41,6 +41,11 @@ public class Post {
     @Setter
     private Double lng;
 
+    // 주소 정보 (nullable)
+    @Column
+    @Setter
+    private String address;
+
     //공유 횟수를 저장할 필드가 필요하여 추가함.
     @Column
     @Setter
