@@ -3,6 +3,7 @@ package com.example.moro.app.post.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// 사진 촬영 요청
 @Getter
 @NoArgsConstructor
 public class CaptureRequest {

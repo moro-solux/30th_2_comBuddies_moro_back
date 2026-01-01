@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.List;
 
+//게시물 저장 이전에 미리보기 응답
 @Getter
 public class CaptureResponse {
     private Long draftId;
