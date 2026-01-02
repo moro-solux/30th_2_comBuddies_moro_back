@@ -1,5 +1,6 @@
 package com.example.moro.app.mission.controller;
 
+import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.mission.dto.*;
 import com.example.moro.app.mission.service.MissionPostService;
 import com.example.moro.global.common.ApiResponseTemplate;
@@ -72,31 +73,31 @@ public class MissionPostController {
     // < 댓글 작성 >
     @PostMapping("posts/comments")
     public ResponseEntity<ApiResponseTemplate<Long>> addComment(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal Member member,
             @RequestBody MisCommentRequest request
     ){
-        Long misCommentId = missionPostService.createMisComments(email, request);
+        Long misCommentId = missionPostService.createMisComments(member.getEmail(), request);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, misCommentId);
     }
 
     // < 특정 댓글 수정 >
-    @PatchMapping("posts/comments/{misCommentId}")
+    @PatchMapping("posts/comments/{misCommentId}/edit")
     public ResponseEntity<ApiResponseTemplate<Void>> updateComment(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal Member member,
             @PathVariable("misCommentId") Long misCommentId,
             @RequestBody MisCommentUpdateRequest request
     ){
-        missionPostService.updateMisComments(email, misCommentId, request.newContent());
+        missionPostService.updateMisComments(member.getEmail(), misCommentId, request.newContent());
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_UPDATED, null);
     }
 
     // < 특정 댓글 삭제 >
-    @DeleteMapping("posts/comments/{misCommentId}")
+    @DeleteMapping("posts/comments/{misCommentId}/delete")
     public ResponseEntity<ApiResponseTemplate<Void>> deleteComment(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal Member member,
             @PathVariable("misCommentId") Long misCommentId
     ){
-        missionPostService.deleteMisComments(email, misCommentId);
+        missionPostService.deleteMisComments(member.getEmail(), misCommentId);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_UPDATED, null);
     }
 }
