@@ -13,5 +13,8 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
     //특정 게시물의 모든 댓글을 작성 순서대로 조회
     List<Comment> findByPostOrderByCreatedAtAsc(Post post);
 
+    //특정 게시물의 댓글 수 카운트
+    int countByPost(Post post);
+
 
 }
