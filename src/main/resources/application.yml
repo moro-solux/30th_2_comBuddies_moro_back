@@ -39,11 +39,15 @@ spring:
               - openid
               - email
               - profile
-
+  google:
+    maps:
+      api:
+        key: ${GOOGLE_MAP_API_KEY}
 app:
   s3:
     bucket: moro-s3-bucket
     region: ap-northeast-2
+
 
 jwt:
   secret: ${JWT_SECRET}

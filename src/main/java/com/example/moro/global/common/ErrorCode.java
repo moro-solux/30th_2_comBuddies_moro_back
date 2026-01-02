@@ -20,7 +20,12 @@ public enum ErrorCode {
     S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에 실패했습니다."),
     S3_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3 파일 삭제에 실패했습니다."),
     S3_ACCESS_DENIED(HttpStatus.FORBIDDEN, "S3 접근 권한이 없습니다."),
-    S3_CONNECTION_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "S3 서버와의 통신에 실패했습니다.");
+    S3_CONNECTION_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "S3 서버와의 통신에 실패했습니다."),
+
+    //geocoding 에러
+    GEOCODING_FAILED(HttpStatus.BAD_REQUEST, "GEOCODING_FAILED"),
+    GEOCODING_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "GEOCODING_SERVICE_UNAVAILABLE");
+
 
 
 

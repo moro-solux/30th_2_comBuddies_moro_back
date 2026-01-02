@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
@@ -42,7 +43,7 @@ public class Post {
     private Double lng;
 
     // 주소 정보 (nullable)
-    @Column
+    @Column(nullable = true)
     @Setter
     private String address;
 
