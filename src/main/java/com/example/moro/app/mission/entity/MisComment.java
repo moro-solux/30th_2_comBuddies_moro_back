@@ -6,9 +6,9 @@ public class MisComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long misCommentid;  // 주키
+    private Long misCommentId;  // 주키
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "misPostId")   // fk 연결
     private MissionPost missionPost;
 
