@@ -34,6 +34,9 @@ public class Post {
     private Double lat;
     private Double lng;
 
+    @Column(nullable = true)
+    private String address;
+
     @Builder
     public Post(Member member, Integer mainColorId, String imageUrl, LocalDateTime createdAt, Double lat, Double lng) {
         this.member = member;
