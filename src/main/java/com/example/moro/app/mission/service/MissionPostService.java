@@ -5,13 +5,16 @@ import com.example.moro.app.follow.entity.Follow;
 import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.repository.MemberRepository;
-import com.example.moro.app.mission.dto.MissionPostRequest;
-import com.example.moro.app.mission.dto.MissionPostResponse;
+import com.example.moro.app.mission.dto.*;
+import com.example.moro.app.mission.entity.MisComment;
 import com.example.moro.app.mission.entity.Mission;
 import com.example.moro.app.mission.entity.MissionPost;
+import com.example.moro.app.mission.repository.MisCommentRepository;
 import com.example.moro.app.mission.repository.MissionPostRepository;
 import com.example.moro.app.mission.repository.MissionRepository;
 import com.example.moro.app.s3.S3Service;
+import com.example.moro.global.common.ErrorCode;
+import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +34,39 @@ public class MissionPostService {
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
     private final FollowRepository followRepository;
+
+    // < 미션 주제 조회 >
+    @Transactional(readOnly = true)
+    public MissionSubjectResponse getSubject(){
+        // 가장 최근에 생성된 미션 조회
+        Mission mission = missionRepository.findFirstByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "미션을 찾을 수 없습니다."));
+
+        // 현재 시각 기준 오전/오후 유효성 검증
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime missionTime = mission.getCreatedAt();
+
+        // 날짜가 다르거나, 오전/오후 시간대가 일치하지 않으면 예외 발생
+        if(!isSameTimeWindow(now, missionTime)){
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND,"현재 유효한 미션이 없습니다.");
+        }
+        return new MissionSubjectResponse(
+                mission.getMissionId(),
+                mission.getMissionTitle(),
+                mission.getMissionType(),
+                mission.getCreatedAt()
+        );
+    }
+
+    private boolean isSameTimeWindow(LocalDateTime now, LocalDateTime missionTime){
+        // 날짜 같은지
+        boolean isSameDay = now.toLocalDate().isEqual(missionTime.toLocalDate());
+        // 오전 여부 확인
+        boolean isNowMorning = now.getHour() < 12;
+        boolean isMissionMorning = missionTime.getHour() < 12;
+
+        return isSameDay && (isNowMorning == isMissionMorning);
+    }
 
     @Transactional
     public Long saveMissionPost(MultipartFile image, MissionPostRequest request) {
@@ -78,7 +114,6 @@ public class MissionPostService {
                 .toList();
     }
 
-
     // 미션 게시물 조회(친구)
     @Transactional(readOnly = true)
     public List<MissionPostResponse> getFriendPosts(Long currentUserId){
@@ -107,4 +142,22 @@ public class MissionPostService {
                 .map(MissionPostResponse::from)
                 .toList();
     }
+
+    // 미션 게시물 삭제
+    @Transactional
+    public void deleteMissionPost(String email, Long misPostId){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        MissionPost post = missionPostRepository.findById(misPostId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "미션 게시물을 찾을 수 없습니다."));
+
+        // 본인 확인
+        if(!post.getMember().equals(member)){
+            throw new BusinessException(ErrorCode.ACCESS_DENIED_EXCEPTION, "본인의 미션 게시물만 삭제할 수 있습니다.");
+        }
+        missionPostRepository.delete(post);
+
+    }
+
 }
