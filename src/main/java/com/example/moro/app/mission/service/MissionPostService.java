@@ -54,6 +54,7 @@ public class MissionPostService {
                 mission.getMissionId(),
                 mission.getMissionTitle(),
                 mission.getMissionType(),
+                mission.getTargetColor(),
                 mission.getCreatedAt()
         );
     }
@@ -82,12 +83,22 @@ public class MissionPostService {
         Mission mission = missionRepository.findById(request.getMissionId())
                 .orElseThrow(() -> new RuntimeException("미션 찾을 수 없습니다."));
 
+        // 미션 타입에 따른 결과 데이터 결정
+        String missionDetailValue;
+        if(Boolean.TRUE.equals(mission.getMissionType())){
+            // 정확도 판별 미션일 경우 -> 색상 분석
+            //double score = calculateColorAccuracy(image, mission.getTargetColor());
+            //missionDetailValue = String.format("%.1f",score);
+        } else{  // 일반 미션일 경우
+            missionDetailValue = "-1";
+        }
+
         // 3. 엔티티 생성 및 저장
         MissionPost missionPost = MissionPost.builder()
                 .member(member)   // FK 연결
                 .mission(mission)   // FK 연결
                 .imageUrl(imageUrl)  // 저장된 사진 경로
-                .detail(request.getDetail())
+                //.detail(missionDetailValue)
                 .lat(request.getLat())
                 .lng(request.getLng())
                 .createdAt(LocalDateTime.now())   // 생성 시간
