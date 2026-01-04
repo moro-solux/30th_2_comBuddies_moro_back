@@ -20,5 +20,7 @@ public interface LikeRepository extends JpaRepository<Like,Long> {
     //사용자가 이미 좋아요를 눌렀는지 여부 확인
     boolean existsByPostAndMember(Post post, Member member);
 
+    long countByPostId(Long postId);
+    Optional<Like> findFirstByPostIdOrderByIdDesc(Long postId);
 
 }

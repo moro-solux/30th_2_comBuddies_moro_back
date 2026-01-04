@@ -2,6 +2,7 @@ package com.example.moro.app.post.service;
 
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.notification.service.NotificationService;
+import com.example.moro.app.post.dto.PostLikeResponse;
 import com.example.moro.app.post.entity.Like;
 import com.example.moro.app.post.entity.Post;
 import com.example.moro.app.post.repository.LikeRepository;
@@ -46,5 +47,27 @@ public class LikeService {
 
 
         }
+    }
+
+    public PostLikeResponse getPostLikeInfo(Long postId) {
+        long count = likeRepository.countByPostId(postId);
+
+        PostLikeResponse.SimpleLikerInfo topLiker = null;
+
+        if (count > 0) {
+            Optional<Like> latestLike = likeRepository.findFirstByPostIdOrderByIdDesc(postId);
+            if (latestLike.isPresent()) {
+                Member member = latestLike.get().getMember();
+                topLiker = new PostLikeResponse.SimpleLikerInfo(
+                        member.getId(),
+                        member.getUserName()
+                );
+            }
+        }
+
+        return PostLikeResponse.builder()
+                .totalCount(count)
+                .topLiker(topLiker)
+                .build();
     }
 }
