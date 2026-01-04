@@ -1,6 +1,7 @@
 package com.example.moro.app.post.service;
 
 import com.example.moro.app.member.entity.Member;
+import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.app.post.dto.CommentResponseDto;
 import com.example.moro.app.post.entity.Comment;
 import com.example.moro.app.post.entity.Post;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
+
 
     //댓글 생성
     public Long createComment(Long postId, String content, Member member) {
@@ -35,7 +38,21 @@ public class CommentService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return commentRepository.save(comment).getId();
+        Comment savedComment = commentRepository.save(comment);
+
+        /* 알림: 댓글 작성자가 게시물 본인이 아닐 경우 알림 발송 */
+        if (!post.getMember().getId().equals(member.getId())) {
+            notificationService.notifyComment(
+                    post.getMember().getId(),
+                    member.getId(),
+                    member.getUserName(),
+                    post.getId(),
+                    savedComment.getId(),
+                    content
+            );
+        }
+
+        return savedComment.getId();
 
     }
 
