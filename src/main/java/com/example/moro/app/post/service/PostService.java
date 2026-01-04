@@ -1,8 +1,11 @@
 package com.example.moro.app.post.service;
 
 import com.example.moro.app.colormap.entity.ColorMap;
+import com.example.moro.app.colormap.entity.UserColorMap;
 import com.example.moro.app.colormap.repository.ColorMapRepository;
+import com.example.moro.app.colormap.repository.UserColorMapRepository;
 import com.example.moro.app.member.entity.Member;
+import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.app.post.dto.PostRequestDto;
 import com.example.moro.app.post.dto.PostResponseDto;
 import com.example.moro.app.post.entity.Post;
@@ -40,6 +43,10 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final ColorExtractor colorExtractor;
     private final ColorMapRepository colorMapRepository;
+    private final UserColorMapRepository userColorMapRepository;
+
+    private final NotificationService notificationService;
+
 
     // 1. 게시물 생성
     public Long createPost(PostRequestDto requestDto, Member member) {
@@ -259,6 +266,20 @@ public class PostService {
         // DRAFT → PUBLISHED 상태 변경
         draft.publish();
         Post publishedPost = postRepository.save(draft);
+
+        /*알림: 최종 게시물의 mainColorId가 UserColorMap에서 아직 unlocked 되지 않은 상태인지 확인하여 해금 알림 */
+        UserColorMap userColorMap = userColorMapRepository
+                .findByMemberAndColorMapColorIdAndUnlockedFalse(member, publishedPost.getMainColorId())
+                .orElse(null);
+
+        if (userColorMap != null) {
+            userColorMap.setUnlocked(true);
+
+            if (Boolean.TRUE.equals(member.getIsNotification())) {
+                notificationService.notifyColorUnlocked(member.getId());
+            }
+        }
+        /* ---------------------------------------------------------------------------------------- */
 
         return publishedPost.getId();
     }
