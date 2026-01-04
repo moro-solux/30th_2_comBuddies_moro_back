@@ -3,6 +3,7 @@ package com.example.moro.app.notification.controller;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.notification.dto.FcmTokenRequest;
 import com.example.moro.app.notification.dto.NotificationResponse;
+import com.example.moro.app.notification.entity.NotificationType;
 import com.example.moro.app.notification.service.FcmService;
 import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.app.notification.service.SseEmitterService;
@@ -76,5 +77,19 @@ public class NotificationController {
         notificationService.read(notificationId);
         return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, null);
     }
+
+    /*
+    @GetMapping("/test-fcm")
+    public ResponseEntity<ApiResponseTemplate<String>> testFcmPush(
+            @RequestParam Long userId,
+            @RequestParam NotificationType type,
+            @RequestParam String content
+    ) {
+        fcmService.sendPush(userId, type, content);
+        return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL,
+                "FCM 테스트 전송 완료! 서버 로그 확인하세요.");
+    }
+`*/
+
 
 }

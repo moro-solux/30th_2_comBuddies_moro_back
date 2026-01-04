@@ -77,7 +77,7 @@ public class NotificationService {
         if (sseEmitterService.isConnected(receiverId)) {
             sseEmitterService.send(receiverId, response);
         } else {
-            fcmService.sendPush(receiverId, type);
+            fcmService.sendPush(receiverId, type, content);
         }
     }
 
