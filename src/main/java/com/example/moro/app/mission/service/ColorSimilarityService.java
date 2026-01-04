@@ -18,7 +18,7 @@ public class ColorSimilarityService {
         );
 
         // 점수 환산 로직
-        double score = 100.0 - (deltaE*0.8);   // 이걸로 정확도 수치 수정
+        double score = 100.0 - (deltaE * 0.7);   // 이걸로 정확도 수치 수정
 
         // 범위 제한(0~100)
         return Math.max(0, Math.min(100, score));

@@ -16,8 +16,8 @@ public class MissionPostResponse {
     private String userName;  // 작성자 이름
     private String imageUrl;   // 이미지 경로
     private String detail;    //
-    private Double lat;
-    private Double lon;
+    //private Double lat;
+    //private Double lon;
     private LocalDateTime createdAt;
 
     // entity를 dto로 변환하는 메서드
@@ -26,6 +26,7 @@ public class MissionPostResponse {
                 .misPostId(post.getMisPostId())
                 .missionTitle(post.getMission().getMissionTitle())
                 .userName(post.getMember().getUserName())
+                .imageUrl(post.getImageUrl())
                 .detail(post.getDetail())
                 .createdAt(post.getCreatedAt())
                 .build();

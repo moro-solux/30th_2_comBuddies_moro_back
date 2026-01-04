@@ -108,8 +108,8 @@ public class MissionPostService {
                 .mission(mission)   // FK 연결
                 .imageUrl(imageUrl)  // 저장된 사진 경로
                 .detail(missionDetailValue)
-                .lat(request.getLat())
-                .lng(request.getLng())
+                //.lat(request.getLat())
+                //.lng(request.getLng())
                 .createdAt(LocalDateTime.now())   // 생성 시간
                 .build();
 
