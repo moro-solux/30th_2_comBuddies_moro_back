@@ -1,10 +1,14 @@
 package com.example.moro.app.member.repository;
 
 import com.example.moro.app.member.entity.Member;
+import com.example.moro.app.mission.entity.Mission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,4 +33,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
 
     Page<Member> findByUserNameContaining(String keyword, Pageable pageable);
+
+    @Query("SELECT m " +
+            "FROM Member m " +
+            "WHERE m.isNotification = true " +
+            "AND m.id NOT IN (" +
+            "SELECT mp.member.id FROM MissionPost mp WHERE mp.mission = :mission)")
+    List<Member> findNonParticipants(@Param("mission") Mission mission);
 }

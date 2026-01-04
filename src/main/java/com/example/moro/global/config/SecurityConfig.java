@@ -55,7 +55,8 @@ public class SecurityConfig {
                                 "/oauth2/**",            // OAuth2 관련 경로
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/sample/**"          // 샘플 API (테스트용)
+                                "/api/sample/**",       // 샘플 API (테스트용)
+                                "/api/s3/**"
                         ).permitAll()
                         // 그 외 모든 요청은 인증 필요
                         .anyRequest().authenticated()

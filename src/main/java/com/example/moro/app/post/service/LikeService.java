@@ -1,12 +1,13 @@
 package com.example.moro.app.post.service;
 
 import com.example.moro.app.member.entity.Member;
+import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.app.post.entity.Like;
 import com.example.moro.app.post.entity.Post;
 import com.example.moro.app.post.repository.LikeRepository;
 import com.example.moro.app.post.repository.PostRepository;
 import jakarta.transaction.Transactional;
-import lombok.Builder;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     //좋아요 토글기능
     public void toggleLike(Long postId, Member member) {
@@ -34,6 +36,15 @@ public class LikeService {
                     .post(post)
                     .member(member)
                     .build());
+
+            /* 알림 연결 : 자기 자신이 누른 좋아요를 제외한 알림 보내기 */
+            Member receiver = post.getMember();
+
+            if (!post.getMember().getId().equals(member.getId()) && Boolean.TRUE.equals(receiver.getIsNotification())) {
+                notificationService.notifyLike(post.getMember().getId(), member.getId(), member.getUserName(), post.getId(), post.getImageUrl());
+            }
+
+
         }
     }
 }

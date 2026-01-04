@@ -1,6 +1,5 @@
 package com.example.moro.app.colormap.repository;
 
-import com.example.moro.app.colormap.dto.ColorDetailResponse;
 import com.example.moro.app.colormap.entity.ColorMap;
 import com.example.moro.app.colormap.entity.UserColorMap;
 import com.example.moro.app.colormap.entity.UserColorMapId;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +20,7 @@ public interface UserColorMapRepository extends JpaRepository<UserColorMap, User
 
     Optional<UserColorMap> findByMemberAndColorMapColorId(Member member, Long colorId);
 
-    Optional<UserColorMap> findByMemberIdAndColorMapColorId(Long memberId, Long colorId);
+    Optional<UserColorMap> findByMemberAndColorMapColorIdAndUnlockedFalse(Member member, Integer colorId);
 
     // 2. 대표색 초기화
     @Modifying
