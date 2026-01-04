@@ -40,8 +40,11 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
 
+
         /* 알림: 댓글 작성자가 게시물 본인이 아닐 경우 알림 발송 */
-        if (!post.getMember().getId().equals(member.getId())) {
+        Member receiver = post.getMember();
+
+        if (!post.getMember().getId().equals(member.getId()) && Boolean.TRUE.equals(receiver.getIsNotification())) {
             notificationService.notifyComment(
                     post.getMember().getId(),
                     member.getId(),

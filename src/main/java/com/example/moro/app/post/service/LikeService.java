@@ -38,7 +38,9 @@ public class LikeService {
                     .build());
 
             /* 알림 연결 : 자기 자신이 누른 좋아요를 제외한 알림 보내기 */
-            if (!post.getMember().getId().equals(member.getId())) {
+            Member receiver = post.getMember();
+
+            if (!post.getMember().getId().equals(member.getId()) && Boolean.TRUE.equals(receiver.getIsNotification())) {
                 notificationService.notifyLike(post.getMember().getId(), member.getId(), member.getUserName(), post.getId());
             }
 
