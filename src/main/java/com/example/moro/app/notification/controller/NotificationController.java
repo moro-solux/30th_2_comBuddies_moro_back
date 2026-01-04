@@ -1,4 +1,4 @@
-package com.example.moro.app.notification.Controller;
+package com.example.moro.app.notification.controller;
 
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.notification.dto.NotificationResponse;

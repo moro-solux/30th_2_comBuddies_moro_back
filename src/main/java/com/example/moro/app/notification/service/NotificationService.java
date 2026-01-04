@@ -4,6 +4,8 @@ import com.example.moro.app.notification.dto.NotificationResponse;
 import com.example.moro.app.notification.entity.Notification;
 import com.example.moro.app.notification.entity.NotificationType;
 import com.example.moro.app.notification.repository.NotificationRepository;
+import com.example.moro.global.common.ErrorCode;
+import com.example.moro.global.exception.BusinessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -60,7 +62,7 @@ public class NotificationService {
     @Transactional
     public void read(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("알림 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "해당 알림을 찾을 수 없습니다."));
 
         notification.setRead(true);
     }
@@ -80,9 +82,9 @@ public class NotificationService {
     }
 
     @Transactional
-    public void notifyLike(Long receiverId, Long actorId, String actorName, Long postId) {
+    public void notifyLike(Long receiverId, Long actorId, String actorName, Long postId, String imageUrl) {
 
-        String content = notificationContentFactory.liked(actorId, actorName, postId);
+        String content = notificationContentFactory.liked(actorId, actorName, postId, imageUrl);
 
         notifyInternal(receiverId, NotificationType.LIKED, content);
     }

@@ -41,7 +41,7 @@ public class LikeService {
             Member receiver = post.getMember();
 
             if (!post.getMember().getId().equals(member.getId()) && Boolean.TRUE.equals(receiver.getIsNotification())) {
-                notificationService.notifyLike(post.getMember().getId(), member.getId(), member.getUserName(), post.getId());
+                notificationService.notifyLike(post.getMember().getId(), member.getId(), member.getUserName(), post.getId(), post.getImageUrl());
             }
 
 
