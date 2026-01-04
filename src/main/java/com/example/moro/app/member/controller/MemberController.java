@@ -1,5 +1,6 @@
 package com.example.moro.app.member.controller;
 
+import com.example.moro.app.follow.dto.FollowUserResponse;
 import com.example.moro.app.follow.service.FollowService;
 import com.example.moro.app.member.dto.*;
 import com.example.moro.app.member.entity.Member;
@@ -18,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.example.moro.global.util.SecurityUtil.getCurrentMember;
 
 @RestController
@@ -29,7 +32,7 @@ public class MemberController {
     private final FollowService followService;
 
     @GetMapping("/{userId}/followers")
-    public ResponseEntity<?> getFollowerList(
+    public ResponseEntity<ApiResponseTemplate<PageResponse<FollowUserResponse>>> getFollowerList(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -43,7 +46,7 @@ public class MemberController {
     }
 
     @GetMapping("/{userId}/followings")
-    public ResponseEntity<?> getFollowingList(
+    public ResponseEntity<ApiResponseTemplate<PageResponse<FollowUserResponse>>> getFollowingList(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -56,7 +59,7 @@ public class MemberController {
     }
 
     @GetMapping("/me/follow-requests")
-    public ResponseEntity<?> getFollowRequestList() {
+    public ResponseEntity<ApiResponseTemplate<List<FollowUserResponse>>> getFollowRequestList() {
         Member me = getCurrentMember();
         Long userId = me.getId();
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, followService.getRequestList(userId));
@@ -64,9 +67,8 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchMember(@RequestParam String keyword,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "20") int size){
+    public ResponseEntity<ApiResponseTemplate<PageResponse<MemberSearchResponse>>> searchMember(
+            @RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size){
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("userName").ascending());
         Page<MemberSearchResponse> response = memberService.search(keyword, pageable);
@@ -74,7 +76,7 @@ public class MemberController {
     }
 
     @GetMapping("/{userId}/profile")
-    public ResponseEntity<?> getUserProfile(@PathVariable Long userId){
+    public ResponseEntity<ApiResponseTemplate<ProfileResponse>> getUserProfile(@PathVariable Long userId) {
 
         Member currentUser = getCurrentMember();
         Long currentUserId = currentUser.getId();
@@ -86,7 +88,7 @@ public class MemberController {
     }
 
     @PutMapping("/me/profile")
-    public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileRequest request) {
+    public ResponseEntity<ApiResponseTemplate<String>> updateMyProfile(@RequestBody UpdateProfileRequest request) {
         Member me = getCurrentMember();
         memberService.updateProfile(
                 me.getId(),
@@ -99,7 +101,7 @@ public class MemberController {
     }
 
     @GetMapping("/{userId}/profile/feed")
-    public ResponseEntity<?> getUserProfileFeed(
+    public ResponseEntity<ApiResponseTemplate<UserFeedListResponse>> getUserProfileFeed(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "DEFAULT") ProfileFeedType viewType,
             @RequestParam(required = false) Integer colorId,
@@ -113,7 +115,8 @@ public class MemberController {
     }
 
     @PutMapping("/me/colors/main")
-    public ResponseEntity<?> updateRepresentativeColors(@RequestBody UpdateRepresentativeColorsRequest request) {
+    public ResponseEntity<ApiResponseTemplate<String>> updateRepresentativeColors(
+            @RequestBody UpdateRepresentativeColorsRequest request) {
 
         Member me = getCurrentMember();
         memberService.updateRepresentativeColors(me.getId(), request.getColorIds());
