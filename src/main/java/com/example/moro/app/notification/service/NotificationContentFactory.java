@@ -15,12 +15,11 @@ public class NotificationContentFactory {
     private final ObjectMapper objectMapper;
 
 
-    public String liked(Long actorId, String actorName, Long postId, int extraCount) {
+    public String liked(Long actorId, String actorName, Long postId) {
         return toJson(Map.of(
                 "actorId", actorId,
                 "actorName", actorName,
-                "postId", postId,
-                "extraCount", extraCount
+                "postId", postId
         ));
     }
 

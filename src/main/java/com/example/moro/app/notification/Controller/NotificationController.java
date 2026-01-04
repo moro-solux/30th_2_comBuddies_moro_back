@@ -57,6 +57,6 @@ public class NotificationController {
     @PostMapping("/test")
     public void testNotification() {
         Member me = getCurrentMember();
-        notificationService.notifyLike(me.getId(),1L,"모로",10L,0);
+        notificationService.notifyLike(me.getId(),1L,"모로",10L);
     }
 }

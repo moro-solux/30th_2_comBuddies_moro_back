@@ -66,9 +66,9 @@ public class NotificationService {
     }
 
     @Transactional
-    public void notifyLike(Long receiverId, Long actorId, String actorName, Long postId, int extraCount) {
+    public void notifyLike(Long receiverId, Long actorId, String actorName, Long postId) {
 
-        String content = notificationContentFactory.liked(actorId, actorName, postId, extraCount);
+        String content = notificationContentFactory.liked(actorId, actorName, postId);
 
         notifyInternal(receiverId, NotificationType.LIKED, content);
     }
