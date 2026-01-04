@@ -17,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.moro.global.util.SecurityUtil.getCurrentMember;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -29,14 +31,10 @@ public class FollowController {
 
     @PostMapping
     public ResponseEntity<?> follow(@RequestBody FollowRequestDto request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED_EXCEPTION);
-        }
-        String email = authentication.getName();
-        Member member = memberService.findByEmail(email);
-        Follow follow = followService.requestFollow(member.getId(), request.getTargetUserId());
+        Member me = getCurrentMember();
+
+        Follow follow = followService.requestFollow(me.getId(), request.getTargetUserId());
 
         FollowResponseDto response = new FollowResponseDto(follow.getFollowId(), follow.getStatus());
 
@@ -66,16 +64,6 @@ public class FollowController {
         Member me = getCurrentMember();
         followService.rejectByFollowing(followId, me.getId());
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_DELETED, null);
-    }
-
-    private Member getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED_EXCEPTION);
-        }
-
-        return memberService.findByEmail(authentication.getName());
     }
 
 
