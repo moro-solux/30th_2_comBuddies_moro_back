@@ -7,6 +7,7 @@ import com.example.moro.app.follow.entity.Follow;
 import com.example.moro.app.follow.entity.FollowStatus;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.repository.MemberRepository;
+import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.global.common.ErrorCode;
 import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class FollowService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final NotificationService notificationService;
+
 
 
     public Follow requestFollow(Long followerId, Long followingId){
@@ -40,6 +43,11 @@ public class FollowService {
 
         Follow follow = Follow.create(follower, following);
         followRepository.save(follow);
+
+        /* 알림 : 팔로우 요청 생성시 팔로우 요청 받은 사람에게 알림 가도록 연결 */
+        if (following.getIsNotification()) {
+            notificationService.notifyFollow(following.getId(), follower.getId(), follower.getUserName());
+        }
 
         return follow;
     }
