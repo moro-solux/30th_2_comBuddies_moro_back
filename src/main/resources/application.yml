@@ -43,6 +43,9 @@ spring:
     maps:
       api:
         key: ${GOOGLE_MAP_API_KEY}
+
+  server-url: ${SERVER_URL}
+
 app:
   s3:
     bucket: moro-s3-bucket

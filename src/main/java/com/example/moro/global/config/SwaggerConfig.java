@@ -9,13 +9,19 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Components;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${spring.server-url}")
+    private String serverUrl;
+
     @Bean
     public OpenAPI api() {
         return new OpenAPI()
@@ -28,7 +34,7 @@ public class SwaggerConfig {
                                 .name("Solux.MORO"))
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local Server")
+                        new Server().url(serverUrl).description("Server URL")
                 ))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
