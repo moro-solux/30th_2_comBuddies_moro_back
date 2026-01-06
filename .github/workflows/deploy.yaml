@@ -22,12 +22,22 @@ jobs:
           mkdir -p ./src/main/resources
           echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml
 
-
       # firebase json 생성
       - name: Make firebase key
         run: |
           mkdir -p ./src/main/resources/firebase
           echo "${{ secrets.FIREBASE_JSON }}" | base64 --decode > ./src/main/resources/firebase/firebase-key.json
+
+      # Gradle 캐시
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper/
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Build with Gradle
         run: |
