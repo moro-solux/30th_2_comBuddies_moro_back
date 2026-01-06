@@ -127,7 +127,7 @@ public class MemberController {
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
     }
 
-    @Operation(summary = "프로필 피드 색상 목록 수정", description = "내 프로필에 표시되는 대표 색상 6가지를 수정합니다.")
+    @Operation(summary = "유저 대표 색상 목록 수정", description = "내 프로필에 표시되는 대표 색상 6가지를 수정합니다.")
     @PutMapping("/me/colors/main")
     public ResponseEntity<ApiResponseTemplate<String>> updateRepresentativeColors(
             @RequestBody UpdateRepresentativeColorsRequest request) {
