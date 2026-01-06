@@ -9,6 +9,7 @@ import com.example.moro.app.mission.entity.MissionPost;
 import com.example.moro.app.mission.repository.MisCommentRepository;
 import com.example.moro.app.mission.repository.MissionPostRepository;
 import com.example.moro.app.mission.repository.MissionRepository;
+import com.example.moro.app.notification.service.NotificationService;
 import com.example.moro.global.common.ErrorCode;
 import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class MisCommentService {
     private final MissionPostRepository missionPostRepository;
     private final MemberRepository memberRepository;
     private final MisCommentRepository misCommentRepository;
+    private final NotificationService notificationService;
+
 
     // 댓글 조회
     @Transactional(readOnly = true)
@@ -58,7 +61,25 @@ public class MisCommentService {
                 .misCreatedAt(LocalDateTime.now())
                 .build();
 
-        return misCommentRepository.save(comment).getMisCommentId();
+        MisComment savedComment = misCommentRepository.save(comment);
+
+        /* 알림: 댓글 작성자가 게시물 본인이 아닐 경우 알림 발송 */
+        Member receiver = post.getMember();
+
+        if (!post.getMember().getId().equals(member.getId()) && Boolean.TRUE.equals(receiver.getIsNotification())) {
+            notificationService.notifyComment(
+                    post.getMember().getId(),
+                    member.getId(),
+                    member.getUserName(),
+                    "MISSION_POST",
+                    post.getMisPostId(),
+                    savedComment.getMisCommentId(),
+                    savedComment.getMisContent()
+            );
+        }
+
+
+        return savedComment.getMisCommentId();
     }
 
     // 댓글 수정
