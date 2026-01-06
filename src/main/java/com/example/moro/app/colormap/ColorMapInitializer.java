@@ -11,7 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-//
+
 @Component
 @RequiredArgsConstructor
 public class ColorMapInitializer implements CommandLineRunner {
@@ -176,7 +176,7 @@ public class ColorMapInitializer implements CommandLineRunner {
 
             colorMapRepository.saveAll(colors);
         }
-//
+
         List<Member> members = memberRepository.findAll();
         List<ColorMap> allColors = colorMapRepository.findAll();
 

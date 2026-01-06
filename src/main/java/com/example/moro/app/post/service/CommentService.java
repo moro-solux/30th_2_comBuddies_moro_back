@@ -49,6 +49,7 @@ public class CommentService {
                     post.getMember().getId(),
                     member.getId(),
                     member.getUserName(),
+                    "POST",
                     post.getId(),
                     savedComment.getId(),
                     content
