@@ -61,6 +61,17 @@ public class FollowService {
         }
             followRepository.delete(follow);
     }
+
+    public void removeFollower(Long myUserId, Long targetUserId){
+        Follow follow = followRepository.findByFollowerIdAndFollowingId(targetUserId, myUserId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "팔로우 관계가 존재하지 않습니다."));
+
+        if(myUserId.equals(targetUserId)){
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "자기자신과의 팔로우 관계 생성 및 삭제는 불가능합니다..");
+        }
+        followRepository.delete(follow);
+
+    }
     @Transactional
     public FollowResponseDto approveFollow(Long followId, Long myUserId) {
 
