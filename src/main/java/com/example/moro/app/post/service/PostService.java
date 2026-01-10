@@ -15,6 +15,8 @@ import com.example.moro.app.post.repository.CommentRepository;
 import com.example.moro.app.post.repository.LikeRepository;
 import com.example.moro.app.post.repository.PostColorRepository;
 import com.example.moro.app.post.repository.PostRepository;
+import com.example.moro.global.common.ErrorCode;
+import com.example.moro.global.exception.BusinessException;
 import com.example.moro.global.util.ColorExtractor;
 import com.example.moro.global.util.ColorExtractor.ColorAnalysisResult;
 import com.example.moro.app.post.dto.CaptureRequest;
@@ -26,6 +28,7 @@ import com.example.moro.app.post.entity.Post.PostStatus;
 import com.example.moro.global.common.dto.PageResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,6 +51,12 @@ public class PostService {
     private final S3Service s3Service;
 
     private final NotificationService notificationService;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
+
+    @Value("${app.post-share-path}")
+    private String postSharePath;
 
 
     // 1. 게시물 생성
@@ -148,16 +157,27 @@ public class PostService {
     }
 
 
-    //4. 게시물 공유
-    public ShareResponse sharePost(Long postId) {
-        Post post=postRepository.findById(postId)
-                .orElseThrow(()-> new IllegalArgumentException("게시물 없음"));
-        post.increaseShareCount();
-        postRepository.save(post);
+    //5. 게시물 공유
+    @Transactional
+    public ShareResponse sharePost(Long postId, Member currentMember) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        if (!post.getMember().getId().equals(currentMember.getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED_EXCEPTION);
+        }
+
+        //공유 수 표기를 하지 않아 주석처리했어요
+        //post.increaseShareCount();
+        //postRepository.save(post);
 
         // 공유 URL 생성
-        String shareUrl = "http://localhost:8080/posts/" + postId;
+        String shareUrl = createShareUrl(post.getId());
         return new ShareResponse(shareUrl);
+    }
+
+    private String createShareUrl(Long postId) {
+        return baseUrl + postSharePath + postId;
     }
 
 
