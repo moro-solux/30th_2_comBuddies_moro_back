@@ -48,8 +48,8 @@ public class PostController {
 
     //게시물 공유
     @PostMapping("/{postId}/share")
-    public ResponseEntity<ApiResponseTemplate<ShareResponse>> sharePost(@PathVariable Long postId) {
-        ShareResponse response = postService.sharePost(postId);
+    public ResponseEntity<ApiResponseTemplate<ShareResponse>> sharePost(@PathVariable Long postId,@AuthenticationPrincipal Member currentMember) {
+        ShareResponse response = postService.sharePost(postId,currentMember);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_UPDATED, response);
     }
 

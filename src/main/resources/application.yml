@@ -47,6 +47,8 @@ spring:
   server-url: ${SERVER_URL}
 
 app:
+  base-url: https://moro-be.store
+  post-share-path: /posts/
   s3:
     bucket: moro-s3-bucket
     region: ap-northeast-2
