@@ -77,6 +77,17 @@ public class MemberController {
 
     }
 
+    @Operation(summary = "팔로워 삭제", description = "유저 본인의 팔로워 목록에서 특정 팔로워를 삭제합니다.")
+    @DeleteMapping("/me/followers/{targetUserId}")
+    public ResponseEntity<ApiResponseTemplate<Void>> removeFollower(@PathVariable Long targetUserId) {
+        Member me = securityUtil.getCurrentMember();
+        Long userId = me.getId();
+        followService.removeFollower(userId, targetUserId);
+
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, null);
+
+    }
+
     @Operation(summary = "유저 검색", description = "전체 유저 중에서 키워드로 회원을 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<ApiResponseTemplate<PageResponse<MemberSearchResponse>>> searchMember(
