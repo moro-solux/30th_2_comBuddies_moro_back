@@ -32,6 +32,8 @@ public class Notification {
 
     private LocalDateTime createdAt;
 
+    private Long targetId;
+
     @PrePersist
     public void prePersist(){
         createdAt = LocalDateTime.now();
