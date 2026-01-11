@@ -32,7 +32,7 @@ public class NotificationService {
     @Transactional(readOnly = true)
     public Map<String, List<NotificationResponse>> getMyNotificationsGrouped(Long memberId) {
 
-        List<Notification> notifications = notificationRepository.findByReceiverId(memberId);
+        List<Notification> notifications = notificationRepository.findByReceiverIdOrderByCreatedAtDesc(memberId);
         ObjectMapper om = new ObjectMapper();
 
         List<NotificationResponse> responseList = notifications.stream()
