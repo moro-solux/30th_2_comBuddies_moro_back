@@ -16,6 +16,7 @@ import com.example.moro.app.s3.S3Service;
 import com.example.moro.global.common.ErrorCode;
 import com.example.moro.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,10 @@ public class MissionPostService {
     private final S3Service s3Service;
     private final FollowRepository followRepository;
     private final ColorAnalysisService colorAnalysisService;
+
+    // 미션 공유
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     // < 미션 주제 조회 >
     @Transactional(readOnly = true)
@@ -181,7 +186,20 @@ public class MissionPostService {
             throw new BusinessException(ErrorCode.ACCESS_DENIED_EXCEPTION, "본인의 미션 게시물만 삭제할 수 있습니다.");
         }
         missionPostRepository.delete(post);
+    }
 
+    @Transactional
+    public MissionShareResponse generateShareUrl(Long misPostId){
+
+        // 게시물 존재 확인
+        MissionPost post = missionPostRepository.findById(misPostId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "미션 게시물을 찾을 수 없습니다."));
+
+        System.out.println("Current Base URL: " + baseUrl);
+        // 공유 URL 생성
+        String shareUrl = String.format("%s/share/missions/%d", baseUrl, misPostId);
+
+        return new MissionShareResponse(misPostId, shareUrl);
     }
 
 }
