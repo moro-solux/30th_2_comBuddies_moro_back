@@ -82,11 +82,39 @@ public class NotificationService {
     }
 
     @Transactional
+    protected void notifyInternal(Long receiverId, NotificationType type, Long targetId, String content)
+    {
+        Notification notification = notificationRepository.save(
+                Notification.builder()
+                        .receiverId(receiverId)
+                        .type(type)
+                        .targetId(targetId)
+                        .content(content)
+                        .build()
+        );
+
+        NotificationResponse response =
+                NotificationResponse.from(notification, objectMapper);
+
+        if (sseEmitterService.isConnected(receiverId)) {
+            sseEmitterService.send(receiverId, response);
+        } else {
+            fcmService.sendPush(receiverId, type, content);
+        }
+    }
+
+    @Transactional
     public void notifyLike(Long receiverId, Long actorId, String actorName, Long postId, String imageUrl) {
 
         String content = notificationContentFactory.liked(actorId, actorName, postId, imageUrl);
 
-        notifyInternal(receiverId, NotificationType.LIKED, content);
+        notificationRepository
+                .findByReceiverIdAndTypeAndTargetId(receiverId, NotificationType.LIKED, postId)
+                .ifPresentOrElse(
+                        noti -> {noti.setContent(content);},
+                        () -> notifyInternal(receiverId, NotificationType.LIKED, postId, content)
+                );
+
     }
 
     @Transactional
