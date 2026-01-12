@@ -92,7 +92,7 @@ public class MapService {
                 .postId(post.getId())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
                 .imageUrl(post.getImageUrl())
-                .address(post.getAddress())
+                .placeName(post.getAddress())
                 .hexCode1(hexCodes.get(0))
                 .hexCode2(hexCodes.get(1))
                 .hexCode3(hexCodes.get(2))
