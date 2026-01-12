@@ -15,6 +15,8 @@ public class MapPostDetailResponse {
     private String imageUrl;
 
     private String placeName;
+    private String addressKo;
+    private String addressEn;
 
     private String hexCode1;
     private String hexCode2;
