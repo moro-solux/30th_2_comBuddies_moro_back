@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetLatLngRes {
+public class GetLatLngResponse {
     private double latitude;
     private double longitude;
 }

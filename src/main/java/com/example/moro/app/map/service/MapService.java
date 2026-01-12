@@ -1,7 +1,7 @@
 package com.example.moro.app.map.service;
 
 import com.example.moro.app.map.dto.BoundingBox;
-import com.example.moro.app.map.dto.GetLatLngRes;
+import com.example.moro.app.map.dto.GetLatLngResponse;
 import com.example.moro.app.map.dto.MapPostDetailResponse;
 import com.example.moro.app.map.dto.MapPostSummary;
 import com.example.moro.app.map.repository.MapRepository;
@@ -63,7 +63,7 @@ public class MapService {
             throw new BusinessException(ErrorCode.BAD_REQUEST, "검색어는 필수입니다.");
         }
 
-        GetLatLngRes latLng = geocodingService.getLatLngByAddress(keyword);
+        GetLatLngResponse latLng = geocodingService.getLatLngByAddress(keyword);
 
         if (latLng == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "해당 주소를 찾을 수 없습니다.");
