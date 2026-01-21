@@ -167,6 +167,16 @@ public class NotificationService {
     @Transactional
     public void notifyFollow(Long receiverId, Long actorId, String actorName) {
 
+        Optional<Notification> existingOpt = notificationRepository.findByReceiverIdAndTypeAndTargetId(
+                receiverId, NotificationType.FOLLOWING, actorId
+        );
+
+        if (existingOpt.isPresent()) {
+            Notification existing = existingOpt.get();
+            existing.setCreatedAt(LocalDateTime.now());
+            return;
+        }
+
         Optional<Follow> followOpt = followRepository.findByFollowerIdAndFollowingId(receiverId, actorId);
 
         String followBackStatus;
@@ -181,7 +191,7 @@ public class NotificationService {
 
         String content = notificationContentFactory.followed(actorId, actorName, followBackStatus);
 
-        notifyInternal(receiverId, NotificationType.FOLLOWING, content);
+        notifyInternal(receiverId, NotificationType.FOLLOWING, actorId, content);
     }
 
     @Transactional
