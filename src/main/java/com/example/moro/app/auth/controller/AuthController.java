@@ -1,6 +1,7 @@
 package com.example.moro.app.auth.controller;
 
 import com.example.moro.app.auth.dto.LoginResponse;
+import com.example.moro.app.auth.dto.NicknameCheckResponse;
 import com.example.moro.app.auth.service.AuthService;
 import com.example.moro.app.member.entity.Member;
 import com.example.moro.app.member.service.MemberService;
@@ -38,6 +39,7 @@ public class AuthController {
         return new RedirectView("/oauth2/authorization/google");
     }
 
+    /*
     @Operation(
             summary = "로그아웃",
             description = "사용자를 로그아웃 처리합니다. (JWT 토큰은 클라이언트에서 삭제 권장)"
@@ -47,6 +49,25 @@ public class AuthController {
         // 클라이언트에서 토큰을 삭제하는 것을 권장
         return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, "로그아웃되었습니다.");
     }
+*/
+    @Operation(
+            summary = "닉네임 중복 확인",
+            description = "회원가입 시 닉네임의 중복 여부를 확인합니다."
+    )
+    @GetMapping("/check-nickname")
+    public ResponseEntity<ApiResponseTemplate<NicknameCheckResponse>> checkNickname(
+            @RequestParam String userName) {
+
+        boolean exists = memberService.existsByUserName(userName);
+
+        NicknameCheckResponse response = NicknameCheckResponse.builder()
+                .available(!exists)  // 사용 가능 여부
+                .exists(exists)      // 중복 여부
+                .build();
+
+        return ApiResponseTemplate.success(SuccessCode.OPERATION_SUCCESSFUL, response);
+    }
+
 
     @Operation(
             summary = "회원가입 완료",
@@ -55,9 +76,11 @@ public class AuthController {
     @PostMapping("/complete-registration")
     public ResponseEntity<ApiResponseTemplate<LoginResponse>> completeRegistration(
             @RequestParam String email,
-            @RequestParam String userName) {
+            @RequestParam String userName,
+            //위치 측정 동의 여부
+            @RequestParam(defaultValue = "true") Boolean locationConsent) {
 
-        LoginResponse response = authService.completeRegistration(email, userName);
+        LoginResponse response = authService.completeRegistration(email, userName,locationConsent);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_CREATED, response);
     }
 

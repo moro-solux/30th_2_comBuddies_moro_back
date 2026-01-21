@@ -41,6 +41,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // [Step 2] 로그인 처리 및 데이터 생성
         LoginResponse loginResponse = authService.handleOAuthLogin(email);
 
+
         // [Step 3] 컨벤션 적용
         var apiResponse = ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, loginResponse);
 
@@ -50,9 +51,3 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
     }
 }
-
-
-
-
-
-
