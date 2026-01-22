@@ -70,6 +70,16 @@ public class MissionPostController {
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
     }
 
+    // <특정 게시물 조회>
+    @GetMapping("posts/{misPostId}")
+    public ResponseEntity<ApiResponseTemplate<MissionPostResponse>> getMissionPostById(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long misPostId
+    ){
+        MissionPostResponse response = missionPostService.viewMissionPostsByMissionId(member.getEmail(), misPostId);
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
+    }
+
     // <미션 게시물 삭제>
     @DeleteMapping("posts/{misPostId}/delete")
     public ResponseEntity<?> deleteMissionPost(

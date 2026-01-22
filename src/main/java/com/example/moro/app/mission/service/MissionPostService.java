@@ -172,6 +172,19 @@ public class MissionPostService {
                 .toList();
     }
 
+    // 내 특정 미션 게시물 조회
+    @Transactional(readOnly = true)
+    public MissionPostResponse viewMissionPostsByMissionId(String email, Long misPostId){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        MissionPost post = missionPostRepository.findById(misPostId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "미션 게시물을 찾을 수 없습니다."));
+
+        // 3. DTO로 변환하여 반환
+        return MissionPostResponse.from(post);
+    }
+
     // 미션 게시물 삭제
     @Transactional
     public void deleteMissionPost(String email, Long misPostId){
