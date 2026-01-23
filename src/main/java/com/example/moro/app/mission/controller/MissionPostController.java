@@ -30,6 +30,16 @@ public class MissionPostController {
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
     }
 
+    // <타겟 미션 업로드 전 색상 분석 미리보기>
+    @PostMapping(value = "/analyze-preview/{missionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponseTemplate<MissionAnalysisResponse>> analyzeMissionPreview(
+            @PathVariable("missionId") Long missionId,
+            @RequestPart("image") MultipartFile image
+    ){
+        MissionAnalysisResponse score = missionPostService.analyzeImagePreview(image, missionId);
+        return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, score);
+    }
+
     // <미션 업로드>
     // POST 방식으로 사진과 데이터를 함께 받음
     @PostMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
