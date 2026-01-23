@@ -148,7 +148,8 @@ public class MemberController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
 
-        UserFeedListResponse response = memberService.getProfileFeed(userId, viewType, colorId, pageable);
+        Member me = securityUtil.getCurrentMember();
+        UserFeedListResponse response = memberService.getProfileFeed(me.getId(), userId, viewType, colorId, pageable);
         return ApiResponseTemplate.success(SuccessCode.RESOURCE_RETRIEVED, response);
     }
 
