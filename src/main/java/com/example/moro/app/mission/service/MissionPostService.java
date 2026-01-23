@@ -76,6 +76,30 @@ public class MissionPostService {
         );
     }
 
+    // 이미지 색상 분석 프리뷰
+    @Transactional(readOnly = true)
+    public MissionAnalysisResponse analyzeImagePreview(MultipartFile image, Long missionId){
+        // 1. 미션 정보 확인
+        Mission mission = missionRepository.findById(missionId)
+                .orElseThrow(()-> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "미션을 찾을 수 없습니다."));
+
+        // 2. 정확도 판별 미션인지 확인
+        if(Boolean.FALSE.equals(mission.getMissionType())){
+            return new MissionAnalysisResponse(-1.0); // 일반 미션인 경우
+        }
+
+        try{
+            // 3. 색상 분석
+            double rawScore = colorAnalysisService.getMissionScore(image.getInputStream(), mission.getTargetColor());
+
+            // 4. 소수점 첫째 자리까지 반올림 (선택 사항)
+            double roundedScore = Math.round(rawScore * 10.0) / 10.0;
+
+            return new MissionAnalysisResponse(roundedScore);
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,"이미지 분석 중 오류각 발생했습니다.");
+        }
+    }
 
     @Transactional
     public MissionPostResponse saveMissionPost(MultipartFile image, MissionPostRequest request) {
