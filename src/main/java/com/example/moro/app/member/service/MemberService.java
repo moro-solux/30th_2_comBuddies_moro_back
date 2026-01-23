@@ -204,9 +204,13 @@ public class MemberService {
     }
 
 
-    public UserFeedListResponse getProfileFeed(Long targetUserId, ProfileFeedType type, Integer colorId, Pageable pageable) {
+    public UserFeedListResponse getProfileFeed(Long currentUserId, Long targetUserId, ProfileFeedType type, Integer colorId, Pageable pageable) {
+
         Member member = memberRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException( ErrorCode.RESOURCE_NOT_FOUND, "해당 회원이 존재하지 않습니다."));
+
+        boolean isMyProfile = currentUserId.equals(targetUserId);
+
 
         Page<Post> postPage;
 
@@ -228,6 +232,12 @@ public class MemberService {
             }
 
             case USER_COLORS -> {
+
+                if (isMyProfile) {
+                    postPage = postRepository.findByMemberOrderByCreatedAtDesc(member, pageable);
+                    break;
+                }
+
                 List<Integer> representativeColorIds =
                         userColorMapRepository
                                 .findByMemberAndIsRepresentativeTrue(member)
